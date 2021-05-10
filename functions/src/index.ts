@@ -60,7 +60,7 @@ export const valueDeleted = functions.firestore
 });
 
 export const valueUpated = functions.firestore
-    // documentId is a wildcard
+    // documentId is a wildcard. eg you get a reference to it using context.params.documentId inside onUpdate/onDelete etc.
     .document('/fruits/{documentId}')
     .onUpdate((snapshot, context) => {
         console.log('Before', snapshot.before.data());
