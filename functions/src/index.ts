@@ -22,20 +22,17 @@ export const hollowWorld = functions.https.onRequest((req, res) => {
 
 export const getUsers = functions.https.onRequest(async (req, res) => {
     // const users = await admin.firestore().collection('guitar').get();
-    const users = await firestore.collection('user').get();
-    const data = users.docs;
+    // GET ALL USERS
+    // const users = await firestore.collection('user').get();
+    // const data = users.docs;
 
-    // // const users = await firestore.collection('user').get();
-
-    // // const myUsers = users.map((el: any) => el.data());
-    // res.status(200).json({
-    //     data: users
-    // });
+    const selectedUser = await firestore.doc('user/7zhu3dLzCajXwjqMFIEN').get();
+    const myData = selectedUser.data();
+    const results = myData.guitars;
 
     const promises: Promise<DocumentSnapshot>[] = [];
-    ['JprCqE8zLDqldbmbcljI', 'K77jDqGFy5zJ2E8FdZgY', 'QhW279yEze7VrEzxz1zo'].forEach((id: string) => {
-        const p = firestore.doc(`guitar/${id}`).get();
-                               //.collection(modelName).doc('myId').   // same????
+    results.forEach((id: string) => {
+        const p = firestore.doc(`guitar/${id}`).get(); //.collection(modelName).doc('myId').   // same????
         promises.push(p);
     });
     const snapshots = await Promise.all(promises);
@@ -43,7 +40,6 @@ export const getUsers = functions.https.onRequest(async (req, res) => {
 
     res.status(200).json({
         data: responseArray,
-        gits: data.map((el: any) => el.data()),
     });
 
 });
