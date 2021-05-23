@@ -60,8 +60,7 @@ const getArrayData =  async (arrayOfIds: Array<string>, collectionName: string):
         promisesArr.push(p);
     });
     const snapshots = await Promise.all(promisesArr);
-    const responseArray = snapshots.map((sShot) => sShot.data());
-    return responseArray;
+    return snapshots.map((snapShot: DocumentSnapshot) => snapShot.data());
 }
 
 export const api = functions.https.onRequest(async (req, res) => {
