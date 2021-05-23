@@ -26,23 +26,44 @@ export const getUsers = functions.https.onRequest(async (req, res) => {
     // const users = await firestore.collection('user').get();
     // const data = users.docs;
 
-    const selectedUser = await firestore.doc('user/7zhu3dLzCajXwjqMFIEN').get();
-    const myData = selectedUser.data();
-    const results = myData.guitars;
+    const userId = req.query.id || '8MlVvpZ3Iu25tc3UxEED';
 
-    const promises: Promise<DocumentSnapshot>[] = [];
-    results.forEach((id: string) => {
-        const p = firestore.doc(`guitar/${id}`).get(); //.collection(modelName).doc('myId').   // same????
-        promises.push(p);
-    });
-    const snapshots = await Promise.all(promises);
-    const responseArray = snapshots.map((sShot) => sShot.data());
+    const selectedUser = await firestore.doc(`user/${userId}`).get();
+    const selectedUserData = selectedUser.data();
+    const results = selectedUserData.guitars;
+
+    // REPLACE WITH getArrayData FUNCTION
+    // const promises: Promise<DocumentSnapshot>[] = [];
+    // results.forEach((id: string) => {
+    //     const p = firestore.doc(`guitar/${id}`).get(); //.collection(modelName).doc('myId').   // same????
+    //     promises.push(p);
+    // });
+    // const snapshots = await Promise.all(promises);
+    // const responseArray = snapshots.map((sShot) => sShot.data());
+
+    const responseArray = await getArrayData(results, 'guitar');
+
+    // add response data to original data
+    selectedUserData.guitars = responseArray;
 
     res.status(200).json({
-        data: responseArray,
+        data: selectedUserData,
+        id: userId
     });
 
 });
+
+// get the data for an array of documents from the selected collection
+const getArrayData =  async (arrayOfIds: Array<string>, collectionName: string): Promise<Array<any>> => {
+    const promisesArr: Promise<DocumentSnapshot>[] = [];
+    arrayOfIds.forEach((id: string) => {
+        const p = firestore.doc(`${collectionName}/${id}`).get(); //.collection(modelName).doc('myId').   // same????
+        promisesArr.push(p);
+    });
+    const snapshots = await Promise.all(promisesArr);
+    const responseArray = snapshots.map((sShot) => sShot.data());
+    return responseArray;
+}
 
 export const api = functions.https.onRequest(async (req, res) => {
     switch (req.method) {
