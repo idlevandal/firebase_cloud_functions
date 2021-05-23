@@ -48,7 +48,6 @@ export const getUsers = functions.https.onRequest(async (req, res) => {
 
     res.status(200).json({
         data: selectedUserData,
-        id: userId
     });
 
 });
