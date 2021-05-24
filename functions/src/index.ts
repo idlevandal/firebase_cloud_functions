@@ -8,6 +8,7 @@ const firestore = app.firestore();
 
 // // Start writing Firebase Functions
 // // https://firebase.google.com/docs/functions/typescript
+// https://www.youtube.com/watch?v=gA6WGYQWrKc
 //
 export const helloWorld = functions.https.onRequest((request, response) => {
   functions.logger.info("Hello logs!", {structuredData: true});
