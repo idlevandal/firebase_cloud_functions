@@ -20,6 +20,15 @@ export const hollowWorld = functions.https.onRequest((req, res) => {
     });
 });
 
+export const getAllUsers = functions.https.onRequest(async (req, res) => {
+    const users = await firestore.collection('user').get();
+    const usersData = users.docs;
+
+    res.status(200).json({
+        data: usersData.map((snapShot: DocumentSnapshot) => snapShot.data()),
+    });
+});
+
 export const getUsers = functions.https.onRequest(async (req, res) => {
     // const users = await admin.firestore().collection('guitar').get();
     // GET ALL USERS
@@ -42,12 +51,15 @@ export const getUsers = functions.https.onRequest(async (req, res) => {
     // const responseArray = snapshots.map((sShot) => sShot.data());
 
     const responseArray = await getArrayData(results, 'guitar');
+    const pedals = await getArrayData(selectedUserData.pedals, 'pedals');
 
     // add response data to original data
     selectedUserData.guitars = responseArray;
+    selectedUserData.pedals = pedals;
 
     res.status(200).json({
         data: selectedUserData,
+        reqMethod: req.method
     });
 
 });
