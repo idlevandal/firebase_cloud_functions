@@ -30,6 +30,48 @@ export const getAllUsers = functions.https.onRequest(async (req, res) => {
     });
 });
 
+export const getGuitar = functions.https.onRequest(async (req, res) => {
+    const id  = req.query.id;
+    if (!id) {
+        res.status(200).json({
+            data: 'No id supplied...'
+        });
+        return;
+    }
+    const guit = await firestore.doc(`guitar/${id}`).get();
+
+    res.status(200).json({
+        data: guit.data(),
+    });
+})
+
+export const getPedals = functions.https.onRequest(async (req, res) => {
+
+    const pedals = await firestore.collection('pedals').get();
+    const pedalData = pedals.docs;
+    res.status(200).json({
+        data: pedalData.map((el: any) => el.data()),
+    });
+});
+
+export const getPedal = functions.https.onRequest(async (req, res) => {
+    const pedal = req.query.pedal;
+
+    if (!pedal) {
+        res.status(404).json({
+            data: 'No pedal provided',
+        });
+        return;
+    }
+
+    const data = await firestore.collection('pedals').where('name', '==', pedal).get();
+    const selectedPedal = data.docs;
+
+    res.status(200).json({
+        data: selectedPedal.map((el: any) => el.data()),
+    });
+});
+
 export const getUsers = functions.https.onRequest(async (req, res) => {
     // const users = await admin.firestore().collection('guitar').get();
     // GET ALL USERS
